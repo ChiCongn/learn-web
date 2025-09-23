@@ -12,7 +12,7 @@ body {
 	top:0px;
 }
 
-#header {
+#top {
 	background-image:url('./images/banner.png');
 	background-repeat:no-repeat;
 	height: 160px;
@@ -20,29 +20,30 @@ body {
 	background-color:#fff000;
 }
 
-#leftbar {
+#left {
 	display:inline;
 	float:left;
 	width:165px;
 }
 
-#content {
+#center {
 	display:inline;
 	float:left;
 	width:605px;
 	padding:20px;
 }
 
-#rightbar {
+#right {
 	display:inline;
 	float:left;
 	width:140px;
 }
 
-.spacer {clear:both;}
+.clear {clear:both;}
 
-#footer{
+#bottom{
 	background-color:#9d2224;
+    display: flex;
 }
 
 p {
