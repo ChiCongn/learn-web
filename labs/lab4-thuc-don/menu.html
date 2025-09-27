@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thực đơn</title>
+    <style>
+        td {
+            font-family: arial;
+            font-size: 12px;
+            cursor:pointer; 
+            color:#0000ff;
+        }
+
+        .portalModTd {
+            background-color:#dee3e7;
+            
+            border-top: #fefefe 1px solid;
+            border-left: #fefefe 1px solid;
+            border-right: #c3c8cb 1px solid;
+            border-bottom: #c3c8cb 1px solid;
+            
+            padding-top: 5px;
+            padding-left: 5px;
+            padding-right: 0px;
+            padding-bottom: 5px;
+            
+            font-size: 12px;
+            font-family: verdana;
+            color: #21536a;
+            cursor:pointer;
+        }
+
+        .portalModTd:hover {
+            background-color: #f8fafc;
+        }
+
+        .portalModTdSelected {
+            background-color: #00fafc;
+            
+            border-top: #fefefe 1px solid;
+            border-left: #fefefe 1px solid;
+            border-right: #c3c8cb 1px solid;
+            border-bottom: #c3c8cb 1px solid;
+            
+            padding-top: 5px;
+            padding-left: 5px;
+            padding-right: 0px;
+            padding-bottom: 5px;
+            
+            font-size: 12px;
+            font-family: verdana;
+            color: #21536a;   
+            cursor:pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <table>
+        <tbody>
+            <tr>
+                <td valign="top">
+                    <table cellspacing="0">
+                        <tbody>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Quản lý cán bộ (Đăng ký thông tin)">
+                                    » Quản lý cán bộ (Đăng ký thông tin)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Phân quyền">
+                                    » Phân quyền
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Cổng thông tin đào tạo và người học">
+                                    » Cổng thông tin đào tạo và người học
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Quản lý văn bản và hồ sơ công việc">
+                                    » Quản lý văn bản và hồ sơ công việc
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Hành chính công">
+                                    » Hành chính công
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="portalModTd"
+                                    title="Hệ thống thông tin báo cáo">
+                                    » Hệ thống thông tin báo cáo
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+
+                <td id="content" valign="top">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        const cells = document.querySelectorAll(".portalModTd");
+        const content = document.querySelector("#content");
+
+        cells.forEach(cell => {
+            cell.addEventListener("click", () => {
+                cells.forEach(c => c.className="portalModTd");
+                cell.className="portalModTdSelected";
+                content.textContent = cell.textContent;
+            })
+        });
+    </script>
+</body>
+</html>

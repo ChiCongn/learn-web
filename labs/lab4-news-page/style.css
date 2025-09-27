@@ -82,7 +82,7 @@ ul.single-vertical-menu  li > a:hover {
 
 #owner {
 	display:inline;
-	float:left;
+	
 	width: 660px;
 	color:#ffffff;
 	padding:20px;
@@ -90,7 +90,7 @@ ul.single-vertical-menu  li > a:hover {
 
 #developer {
 	display:inline;
-	float:left;
+	
 	color:#999999;
 	width: 240px;
 	padding:20px;

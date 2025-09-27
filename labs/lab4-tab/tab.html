@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab</title>
+    <style type="text/css">
+		.tab {
+			background-color: #cccccc;
+			border-left: solid 1px #dcdcdc;
+			border-right: solid 1px #dcdcdc;
+			border-top: solid 1px #dddddd;
+			border-bottom: solid 0px #dddddd;
+		}
+		.selected-tab {
+			background-color: #00ffff;
+			border-left: solid 1px #dcdcdc;
+			border-right: solid 1px #dcdcdc;
+			border-top: solid 1px #dddddd;
+			border-bottom: solid 0px #dddddd;
+		}
+		.tab:hover {
+			background-color: #fcfcfc;
+			border-left: solid 1px #dcdcdc;
+			border-right: solid 1px #dcdcdc;
+			border-top: solid 1px #dddddd;
+			border-bottom: solid 0px #dddddd;
+			cursor:pointer;
+		}
+	</style>
+</head>
+<body>
+    <table cellpadding="2" cellspacing="0">
+		<tbody><tr>
+			<td id="vnexpress" class="tab" onclick="openTab(this)">VnExpress</td>
+            <td id="dantri" class="tab" onclick="openTab(this)">Dantri</td>
+            <td id="voanews" class="tab" onclick="openTab(this)">VOANews</td>
+            <td id="zing" class="tab" onclick="openTab(this)">Zing</td>
+		</tr>
+	</tbody></table>
+    <hr>
+    <iframe id="myframe" style="height:500px; width:100%;"></iframe>
+    <script type="text/javascript">
+        frm = document.querySelector("#myframe");
+        tabs = document.querySelectorAll(".tab");
+        tabs.forEach(element => {
+            element.addEventListener("click", () => {
+                tabs.forEach(tab => tab.className="tab");
+                element.className="selected-tab";
+            });
+        });
+		function openTab(tab) {
+			if (tab.id == "vnexpress") {
+				frm.src = "https://vnexpress.net";
+			} else if (tab.id == "dantri") {
+				frm.src = "https://dantri.com.vn/";
+			} else if (tab.id == "voanews") {
+				frm.src = "https://www.voanews.com/";
+			} else if (tab.id == "zing") {
+				frm.src = "https://znews.vn/";
+			}
+		}
+	</script>
+</body>
+</html>
