@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+<body>
+    <form id="form" method="post" action="newacc.php">
+        <div>
+            <label class="new-line" for="name">Họ tên:</label>
+            <input id="name" type="text" class="required-field">
+            <span id="error-name" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="address">Địa chỉ:</label>
+            <input type="text" id="address">
+            <br>
+        </div>
+        <div>
+            <label class="new-line">Giới tính:</label>
+
+            <label for="men" class="radio-container">
+                <input id="men" type="radio" name="sex">
+                Nam
+                <span class="checkmark"></span>
+                <span class="checkmark2"></span>
+            </label>
+
+            <label for="women" class="radio-container">
+                <input id="women" type="radio" name="sex">
+                Nữ
+                <span class="checkmark"></span>
+                <span class="checkmark2"></span>
+            </label>
+            <br>
+        </div>
+
+        <div>
+            <label class="new-line" for="birth">Ngày sinh:</label>
+            <input type="text" autocomplete="off" name="birth" id="birth" class="required-field" placeholder="nn/tt/nnnn">
+            <span id="error-birth" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="email">E-mail:</label>
+            <input type="text" name="email" id="email" class="required-field">
+            <span id="error-email" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="phone">Điện thoại:</label>
+            <input type="text" name="phone" id="phone">
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="course">Khóa đăng ký:</label>
+            <label for="english" class="checkbox-container">
+                <input type="checkbox" name="english" id="english"> Tiếng Anh
+                <span class="checkmark"></span>
+                <span class="checkmark2"></span>
+            </label>
+            <label for="management" class="checkbox-container">
+                <input type="checkbox" name="management" id="management"> Quản trị
+                <span class="checkmark"></span>
+                <span class="checkmark2"></span>
+            </label>
+            <label for="it" class="checkbox-container">
+                <input type="checkbox" name="it" id="it"> CNTT
+                <span class="checkmark"></span>
+                <span class="checkmark2"></span>
+            </label>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="username">Tên sử dụng:</label>
+            <input type="text" name="username" id="username" class="required-field">
+            <span id="error-username" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="password">Mật khẩu:</label>
+            <input type="password" name="password" id="password">
+            <span id="error-password" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="confirm-password">Gõ lại mật khẩu:</label>
+            <input type="password" name="confirm-password" id="confirm-password">
+            <span id="error-confirm-password" class="error"></span>
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="note">Ghi chú:</label>
+            <textarea type="text" name="note" id="note"></textarea>
+            <br>
+        </div>
+        <div>
+            <label class="new-line">&nbsp;</label>
+            <img class="preview nodisplay" src="" style="height:200px;">
+            <br>
+        </div>
+        <div>
+            <label class="new-line" for="file">Ảnh chân dung:</label>
+            <input type="file" name="file" id="file" accept=".png,.jpg">
+            <br>
+        </div>
+        <div>
+			<label class="new-line">&nbsp;</label>
+			<input type="button" onclick="approve();" value="Chấp nhận">
+			<input type="button" onclick="ignore();" value="Bỏ qua">
+			<br>
+		</div>
+    </form>
+    <script src="form.js"></script>
+</body>
+</html>

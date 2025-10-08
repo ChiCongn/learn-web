@@ -1,0 +1,21 @@
+#tbl {
+	border: solid 1px #000000;
+	border-collapse:collapse;
+}
+#tbl td, th {
+	border: solid 1px #000000;
+}
+#tbl thead {
+	background-color:#fc05a9;
+}
+#tbl tr.oddr {
+	background-color:#dfdfdf;
+}
+#tbl tr.evenr {
+	background-color:#f0f0f0;
+}
+#tbl tr.selectedr {background-color:yellow;}
+
+.nodisplay {display:none;}
+
+div.group-op-container {height:30px;}
