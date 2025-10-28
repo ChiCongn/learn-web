@@ -1,0 +1,193 @@
+document.querySelector('button.sync').onclick = function () {
+    clearOutput();
+    output("BEGIN sync");
+    let ret = sFunction();
+    output(ret);
+    output("END.");
+};
+
+| Giai đoạn                    | Call Stack                  | Macrotask Queue | Microtask Queue | Output                      |
+| ---------------------------- | --------------------------- | --------------- | --------------- | --------------------------- |
+| Trước click                  | -                           | `[click event]` | -               |                             |
+| Khi onclick                  | `onclick()`                 | -               | -               |                             |
+| `output("BEGIN sync")`       | `onclick()`                 | -               | -               | BEGIN sync                  |
+| `sFunction()` đang chạy      | `onclick()` → `sFunction()` | -               | -               | BEGIN sync                  |
+| Sau khi `sFunction()` trả về | `onclick()`                 | -               | -               | BEGIN sync<br>Hello         |
+| `output("END.")`             | `onclick()`                 | -               | -               | BEGIN sync<br>Hello<br>END. |
+| Hàm kết thúc                 | -                           | -               | -               | BEGIN sync<br>Hello<br>END. |
+
+================================================================================================================================
+
+document.querySelector('button.settimeout').onclick = function () {
+    clearOutput();
+    output("BEGIN settimeout");
+    setTimeout(
+        function () {
+            let ret = sFunction();
+            output(ret);
+        },
+        0);
+    output("END.");
+};
+
+| Giai đoạn                        | Call Stack         | Macrotask Queue      | Microtask Queue | Output                            |
+| -------------------------------- | ------------------ | -------------------- | --------------- | --------------------------------- |
+| Trước click                      | -                  | `[click]`            | -               |                                   |
+| Khi bắt đầu onclick              | `onclick()`        | -                    | -               |                                   |
+| Sau `output("BEGIN settimeout")` | `onclick()`        | -                    | -               | BEGIN settimeout                  |
+| Sau `setTimeout(...)`            | `onclick()`        | `[timeout callback]` | -               | BEGIN settimeout                  |
+| Sau `output("END.")`             | `onclick()`        | `[timeout callback]` | -               | BEGIN settimeout<br>END.          |
+| Sau khi onclick kết thúc         | -                  | `[timeout callback]` | -               | BEGIN settimeout<br>END.          |
+| Khi callback timeout chạy        | `timeout callback` | -                    | -               | BEGIN settimeout<br>END.<br>Hello |
+| Kết thúc                         | -                  | -                    | -               | BEGIN settimeout<br>END.<br>Hello |
+
+======================================================================================================================================
+
+document.querySelector('button.promise').onclick = function () {
+    clearOutput();
+    output("BEGIN promise");
+    aFunction1().then(function (ret) {
+        output(ret);
+    });
+    output("END.");
+};
+
+| Giai đoạn                     | Call Stack      | Macrotask Queue | Microtask Queue   | Output                             |
+| ----------------------------- | --------------- | --------------- | ----------------- | ---------------------------------- |
+| Trước click                   | -               | `[click]`       | -                 |                                    |
+| Khi onclick bắt đầu           | `onclick()`     | -               | -                 |                                    |
+| Sau `output("BEGIN promise")` | `onclick()`     | -               | -                 | BEGIN promise                      |
+| Sau `aFunction1().then(...)`  | `onclick()`     | -               | `[then callback]` | BEGIN promise                      |
+| Sau `output("END.")`          | `onclick()`     | -               | `[then callback]` | BEGIN promise<br>END.              |
+| Sau onclick kết thúc          | -               | -               | `[then callback]` | BEGIN promise<br>END.              |
+| Khi microtask chạy            | `then callback` | -               | -                 | BEGIN promise<br>END.<br>Hello A1! |
+
+==============================================================================================================================
+
+document.querySelector('button.async').onclick = function () {
+    clearOutput();
+    output("BEGIN async");
+    aFunction2().then(function (ret) {
+        output(ret);
+    });
+    output("END.");
+};
+
+| Giai đoạn                    | Call Stack      | Macrotask Queue | Microtask Queue   | Output                           |
+| ---------------------------- | --------------- | --------------- | ----------------- | -------------------------------- |
+| Trước click                  | -               | `[click]`       | -                 |                                  |
+| Khi onclick bắt đầu          | `onclick()`     | -               | -                 |                                  |
+| Sau `BEGIN async`            | `onclick()`     | -               | -                 | BEGIN async                      |
+| Sau `aFunction2().then(...)` | `onclick()`     | -               | `[then callback]` | BEGIN async                      |
+| Sau `END.`                   | `onclick()`     | -               | `[then callback]` | BEGIN async<br>END.              |
+| Sau onclick kết thúc         | -               | -               | `[then callback]` | BEGIN async<br>END.              |
+| Khi microtask chạy           | `then callback` | -               | -                 | BEGIN async<br>END.<br>Hello A2! |
+
+===========================================================================================================================
+
+document.querySelector('button.await').onclick = async function () {
+    clearOutput();
+    output("BEGIN await");
+    let ret = await aFunction1();
+    output(ret);
+    output("END.");
+};
+
+| Giai đoạn                   | Call Stack                 | Macrotask Queue | Microtask Queue            | Output                           |
+| --------------------------- | -------------------------- | --------------- | -------------------------- | -------------------------------- |
+| Trước click                 | -                          | `[click]`       | -                          |                                  |
+| Khi `onclick` bắt đầu       | `onclick()`                | -               | -                          |                                  |
+| Sau `output("BEGIN await")` | `onclick()`                | -               | -                          | BEGIN await                      |
+| Gặp `await aFunction1()`    | `onclick()`                | -               | -                          | BEGIN await                      |
+| Sau khi `onclick` tạm dừng  | -                          | -               | -                          | BEGIN await                      |
+| Khi microtask chạy          |                            | -               | -                          | BEGIN await<br>Hello A1!<br>END. |
+
+==============================================================================================================================================
+
+document.querySelector('button.syncvsasync').onclick = function () {
+    clearOutput();
+    output("BEGIN sync vs async");
+    aFunction1().then(function (ret) {
+        output(ret);
+    });
+    aFunction2().then(function (ret) {
+        output(ret);
+    });
+    let ret = sFunction(1);
+    output(ret);
+    output("END.");
+};
+
+| Giai đoạn           | Call Stack | Microtask Queue  | Output           |
+| ------------------- | ---------- | ---------------- | ---------------- |
+| click               | `onclick`  | —                | —                |
+| BEGIN               | `onclick`  | —                | BEGIN            |
+| aFunction1 start    | `onclick`  | `[then1]`        |                  |
+| aFunction2 start    | `onclick`  | `[then1, then2]` |                  |
+| sFunction start     | `onclick`  | `[then1, then2]` |                  |
+| sFunction done 1    | `onclick`  | `[then1, then2]` |                  |
+| END                 | `onclick`  | `[then1, then2]` | END              |
+| onclick done        | —          | `[then1, then2]` | —                |
+| microtask run then1 | —          | `[then2]`        |                  |
+| microtask run then2 | —          | —                |                  |
+
+==========================================================================
+
+document.querySelector('button.waitall').onclick = function () {
+    clearOutput();
+    output("BEGIN waitall");
+    console.log("start");
+    let p1 = aFunction1();
+    let p2 = aFunction2();
+    Promise.all([p1, p2]).then(function (arr) {
+        console.log("Promise all");
+        output(arr[0]);
+        output(arr[1]);
+    });
+    console.log("end");
+    output("END.");
+};
+
+| Giai đoạn         | Call Stack  | Microtask Queue         | Output                          |
+| ----------------- | ----------- | ----------------------- | ----------------------------------------------- |
+| Run onclick       | `onclick()` | —                       | BEGIN waitall                                   |
+| aFunction1/2 sync | `onclick()` | `[then of Promise.all]` |                                                 |
+| END               | `onclick()` | `[then of Promise.all]` | END.                                            |
+| onclick done      | —           | `[then of Promise.all]` |                                                 |
+| run microtask     | —           | —                       |                                                 |
+
+===============================================================================================================
+
+document.querySelector('button.mixed').onclick = function () {
+    clearOutput();
+    output("BEGIN mixed");
+    setTimeout(() => {
+        output('setTimeout 1');
+    }, 10);
+    setTimeout(() => {
+        output('setTimeout 2');
+    }, 0);
+
+    new Promise(function (fulfill, reject) {
+        fulfill('Promise 1');
+    })
+    .then(function (res) { output(res); return "Sub Promise 1"; })
+    .then(function (res) { output(res); });
+
+    new Promise((fulfill, reject) => {
+        fulfill('Promise 2');
+    })
+    .then(res => { output(res); return "Sub Promise 2"; })
+    .then(res => { output(res); });
+    
+    output("END.");
+};
+
+| Giai đoạn     | Call Stack         | Microtask Queue | Macrotask Queue     | Output                                                     |
+| ------------- | ------------------ | --------------- | ------------------- | ---------------------------------------------------------- |
+| Bắt đầu       | onclick()          | -               | -                   |                                                            |
+| Dòng 1–6      | Đang thực thi sync | thêm `.then()`  | thêm 2 `setTimeout` | `BEGIN mixed`, `END.`                                      |
+| Sau sync      | -                  | 4 `.then()`     | 2 `setTimeout`      |                                                            |
+| Sau microtask | -                  | -               | 2 `setTimeout`      | `Promise 1`, `Promise 2`, `Sub Promise 1`, `Sub Promise 2` |
+| Sau macrotask | -                  | -               | -                   | `setTimeout 2`, `setTimeout 1`                             |
+

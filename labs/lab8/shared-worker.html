@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Worker - Upload & Process Image</title>
+    <style>
+        .nodisplay {
+            display: none;
+        }
+
+        .acknowledgment {
+            color: #999;
+            font-size: x-small;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <label>Chọn tệp ảnh:</label>
+        <input type="file" id="FileUpload1" accept=".png,.jpg">
+    </div>
+
+    <div>
+        Ảnh gốc:
+        <img class="preview nodisplay">
+    </div>
+
+    <div>
+        Ảnh sau khi xử lý (Sepia):
+        <canvas class="target nodisplay"></canvas>
+    </div>
+
+    <div class="acknowledgment">
+        Supported by: <a href="https://itest.com.vn">iTest Team</a>
+    </div>
+
+    <script>
+        const worker = new SharedWorker("shared-worker.js");
+        const port = worker.port;
+        port.start();
+
+        const fileInput = document.getElementById("FileUpload1");
+        const preview = document.querySelector("img.preview");
+        const canvas = document.querySelector("canvas.target");
+
+        fileInput.onchange = function () {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                preview.src = reader.result;
+                preview.classList.remove("nodisplay");
+
+                setTimeout(() => {
+                    const ctx = canvas.getContext("2d");
+                    canvas.width = preview.clientWidth;
+                    canvas.height = preview.clientHeight;
+                    ctx.drawImage(preview, 0, 0, canvas.width, canvas.height);
+
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const pixels = imgData.data;
+
+                    // Gửi dữ liệu cho Shared Worker
+                    port.postMessage({
+                        type: "process",
+                        data: pixels,
+                        width: canvas.width,
+                        height: canvas.height
+                    });
+                }, 100);
+            };
+
+            if (file) reader.readAsDataURL(file);
+        };
+
+        // Nhận ảnh đã xử lý
+        port.onmessage = function (e) {
+            if (e.data.type === "processed") {
+                const ctx = canvas.getContext("2d");
+                const w = e.data.width;
+                const h = e.data.height;
+                canvas.width = w;
+                canvas.height = h;
+                ctx.putImageData(new ImageData(e.data.data, w, h), 0, 0);
+                canvas.classList.remove("nodisplay");
+            }
+        };
+    </script>
+</body>
+</html>

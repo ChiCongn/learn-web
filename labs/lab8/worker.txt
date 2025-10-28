@@ -1,0 +1,8 @@
+| Đặc điểm               | Dedicated Worker                                      | Shared Worker                                                     |
+| ---------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| **Phạm vi**            | Chỉ dành cho tab/page đã tạo nó                       | Dùng chung giữa nhiều tab cùng domain                             |
+| **Tạo bằng**           | `new Worker("dw.js")`                                 | `new SharedWorker("sw.js")`                                       |
+| **Kết nối**            | Giao tiếp trực tiếp qua `postMessage()`               | Giao tiếp qua `port` (`worker.port.postMessage()`)                |
+| **Chia sẻ dữ liệu**    | Không (mỗi worker độc lập)                            | Có (dữ liệu có thể dùng chung)                                    |
+| **Số lượng instance**  | Mỗi tab tạo 1 instance                                | 1 instance duy nhất cho tất cả tab cùng origin                    |
+

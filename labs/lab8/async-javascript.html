@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asynchronous Javascript</title>
+</head>
+
+<body>
+    <h2>Lab. JavaScript không đồng bộ</h2>
+    <p>
+        Nghiên cứu mã nguồn được cho ở khung bên phải. Kích chuột vào các nút bấm sau đây và quan sát kết quả thực hiện
+        của từng hàm sự kiện. Hãy giải thích kết quả nhận được và cho biết trạng thái của <strong>call stack</strong>,
+        <strong>macrotask queue</strong> và <strong>microtask queue</strong> ở từng bước thực thi.
+    </p>
+    <button class="sync">sync</button>
+    <button class="settimeout">settimeout</button>
+    <button class="promise">promise</button>
+    <button class="async">async</button>
+    <button class="await">await</button>
+    <button class="syncvsasync">async vs sync</button>
+    <button class="waitall">waitall</button>
+    <button class="mixed">mixed</button>
+    <div class="section">
+        <div class="left">
+            <pre class="output"></pre>
+        </div>
+        <div class="center"></div>
+        <div class="right">
+            <pre class="code">
+            // 	
+            //	Hàm đồng bộ
+            //	Hàm này chỉ có ý nghĩa demo cho một tác vụ nào đó
+            //  
+            function sFunction () {
+                return ("Hello S!");
+            }
+            //
+            //	Hàm này viết lại sFunction() nhưng được thực hiện không đồng bộ
+            //	bằng cách tạo và trả về Promise một cách tường minh
+            //
+            function aFunction1 () {
+                return new Promise(function(fulfill, reject) {
+                    fulfill("Hello A1!");
+                });
+            }
+            //	
+            //	Hàm này là viết lại aFunction() bằng viêc sử dụng từ khóa async 
+            //	Promise được tạo và trả về một cách không tường minh
+            //	
+            async function aFunction2 () {
+                return ("Hello A2!");
+            }
+            // 
+            //	Thêm p vào div.output
+            //
+            function output(txt) {
+                let target = document.querySelector(".output");
+                let p = document.createElement('p');
+                p.textContent = txt;
+                target.appendChild(p);
+            }
+            // 
+            //	Xóa nội dung div.output
+            //
+            function clearOutput() {
+                document.querySelector(".output").innerHTML = "";
+            }
+            
+            //
+            //	Gọi hàm sFunction1() ...
+            //	... rồi thêm đoạn văn 
+            //
+            document.querySelector('button.sync').onclick = function() {
+                clearOutput();
+                output("BEGIN sync");
+                let ret = sFunction();
+                output(ret);
+                output("END.");
+            };
+
+            //
+            //	Gọi hàm sFunction() ...
+            //	... rồi thêm đoạn văn 
+            //
+            document.querySelector('button.settimeout').onclick = function() {
+                clearOutput();
+                output("BEGIN settimeout");
+                setTimeout(
+                    function() {
+                        let ret = sFunction();
+                        output(ret);
+                    }, 
+                    0);
+                output("END.");
+            };
+
+            //
+            //	Gọi hàm aFunction() ...
+            //	... rồi thêm đoạn văn 
+            // 
+            document.querySelector('button.promise').onclick = function() {
+                clearOutput();
+                output("BEGIN promise");
+                aFunction1().then(function (ret) {
+                    output(ret);
+                });
+                output("END.");
+            };
+
+            //
+            //	Gọi hàm aFunction2() ...
+            //	... rồi thêm đoạn văn
+            //
+            document.querySelector('button.async').onclick = function() {
+                clearOutput();
+                output("BEGIN async");
+                aFunction2().then(function (ret) {
+                    output(ret);
+                });
+                output("END.");
+            };
+
+            //
+            //	Gọi hàm aFunction() ...
+            //	... rồi thêm đoạn văn 
+            //
+            document.querySelector('button.await').onclick = async function() {
+                clearOutput();
+                output("BEGIN await");
+                let ret = await aFunction1();
+                output(ret);
+                output("END.");
+            };
+
+            //
+            //	Gọi cả ba hàm aFunction1(), aFunction2() và sFunction()
+            //	... rồi thêm các đoạn văn
+            //
+            document.querySelector('button.syncvsasync').onclick = function() {
+                clearOutput();
+                output("BEGIN sync vs async");
+                aFunction1().then(function (ret) {
+                    output(ret);
+                });
+                aFunction2().then(function (ret) {
+                    output(ret);
+                });
+                let ret = sFunction(1);
+                output(ret);
+                output("END.");
+            };
+            //
+            //	Đồng thời đợi aFunction1() và aFunction2()...
+            //	... rồi thêm các đoạn văn 
+            //
+            document.querySelector('button.waitall').onclick = function() {
+                clearOutput();
+                output("BEGIN waitall");
+                let p1 = aFunction1();
+                let p2 = aFunction2();
+                Promise.all([p1, p2]).then(function (arr) {
+                    output(arr[0]);
+                    output(arr[1]);
+                });
+                output("END.");
+            };
+
+            //
+            //	Đồng thời đợi aFunction1() và aFunction2()...
+            //	... rồi thêm các đoạn văn 
+            //
+            document.querySelector('button.mixed').onclick = function() {
+                clearOutput();
+                output("BEGIN mixed");
+                setTimeout(() =&gt; { output('setTimeout 1'); }, 10);
+                setTimeout(() =&gt; { output('setTimeout 2'); }, 0);
+
+                new Promise(function(fulfill, reject) { fulfill('Promise 1'); })
+                .then (function(res) { output(res); return "Sub Promise 1";})
+                .then (function(res) { output(res); });
+
+                new Promise((fulfill, reject) =&gt; { fulfill('Promise 2'); })
+                .then (res =&gt; {output(res); return "Sub Promise 2";})
+                .then (res =&gt; {output(res);});
+                output("END.");
+            };
+
+			</pre>
+        </div>
+    </div>
+
+    <script src="async-javascript.js"></script>
+
+</body>
+
+</html>

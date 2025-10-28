@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dedicated Worker</title>
+    <style>
+        .nodisplay {
+            display: none;
+        }
+
+        .acknowledgment {
+            color: #999;
+            font-size: x-small;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <label>Chọn tệp ảnh:</label>
+        <input type="file" id="FileUpload1" accept=".png,.jpg">
+    </div>
+    <div>
+        Ảnh gốc:
+        <img class="preview nodisplay">
+    </div>
+    <div>
+        Ảnh qua biến đổi Sepia:
+        <canvas class="target nodisplay"></canvas>
+    </div>
+    <div class="acknowledgment">Supported by: <a href="https://itest.com.vn">iTest Team</a></div>
+
+    <script src="dedicated-worker.js"></script>
+
+</body>
+
+</html>
