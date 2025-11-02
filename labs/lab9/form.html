@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form nhập liệu</title>
+    <style type="text/css">
+        label.newrow {
+            float: left;
+            width: 100px;
+        }
+
+        span.errornote {
+            color: red;
+        }
+
+        form br {
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Lab. Nhập liệu</h1>
+
+    <form method="post" id="form1">
+        <label for="studentId" class="newrow">Mã:</label>
+        <input type="text" name="studentId" id="studentId">
+        <span id="error_studentId" class="errornote"></span>
+        <br>
+
+        <label for="fullName" class="newrow">Họ tên:</label>
+        <input type="text" name="fullName" id="fullName">
+        <span id="error_fullName" class="errornote"></span>
+        <br>
+
+        <label for="birthDate" class="newrow">Ngày sinh:</label>
+        <input type="text" name="birthDate" id="birthDate">
+        <span id="error_birthDate" class="errornote"></span>
+        <br>
+
+        <label for="gender" class="newrow">Giới tính:</label>
+        <select id="gender" name="gender">
+            <option value="1" selected="selected">Nam</option>
+            <option value="0">Nữ</option>
+        </select>
+        <br>
+
+        <label for="hometown" class="newrow">Quê quán:</label>
+        <input type="text" name="hometown" id="hometown">
+        <br>
+
+        <label class="newrow">&nbsp;</label>
+        <input type="button" id="btnSubmit" value="Chấp nhận">
+        <input type="button" value="Bỏ qua">
+    </form>
+    <script type="text/javascript" src="./chore/util.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript">
+        // --- Utility Functions ---
+        function normalizeName(name) {
+            return normalizeFullName(name);
+        }
+
+        function isValidDate(value) {
+            return isValidDateFormat(value);
+        }
+
+        // --- Event Handlers ---
+        function handleStudentIdKeyUp(e) {
+            if (e.key === "Enter") $("#fullName").focus();
+        }
+
+        function handleFullNameKeyUp(e) {
+            $("#error_fullName").html("");
+            if (e.key === "Enter") $("#birthDate").focus();
+        }
+
+        function handleBirthDateKeyUp(e) {
+            if (e.key === "Enter") $("#gender").focus();
+        }
+
+        function handleGenderKeyUp(e) {
+            if (e.key === "Enter") $("#hometown").focus();
+        }
+
+        function handleFullNameBlur() {
+            const name = $("#fullName").val();
+            $("#fullName").val(normalizeName(name));
+        }
+
+        function handleSubmit() {
+            $("#error_studentId, #error_fullName, #error_birthDate").html("");
+
+            const studentId = $("#studentId").val().trim();
+            const fullName = $("#fullName").val().trim();
+            const birthDate = $("#birthDate").val().trim();
+
+            // check valid
+            if (!studentId) {
+                $("#error_studentId").html("Chưa nhập mã sinh viên.");
+            }
+
+            if (!fullName) {
+                $("#error_fullName").html("Chưa nhập họ tên.");
+            }
+
+            if (birthDate && !isValidDate(birthDate)) {
+                $("#error_birthDate").html("Ngày sinh không hợp lệ.");
+            }
+        }
+
+        // --- Init ---
+        $(document).ready(function () {
+            $("#studentId").focus();
+
+            $("#studentId").on("keyup", handleStudentIdKeyUp);
+            $("#fullName").on("keyup", handleFullNameKeyUp);
+            $("#birthDate").on("keyup", handleBirthDateKeyUp);
+            $("#gender").on("keyup", handleGenderKeyUp);
+
+            $("#fullName").on("blur", handleFullNameBlur);
+
+            $("#btnSubmit").on("click", handleSubmit);
+        });
+
+    </script>
+
+</body>
+
+</html>

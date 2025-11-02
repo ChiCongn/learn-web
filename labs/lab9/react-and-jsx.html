@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React + JSX</title>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel to compile JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+		.box {border:solid 1px red;}
+		.yellow {background-color:yellow;}
+		.nodisplay {display:none;}
+	</style>
+</head>
+
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        class Product extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { isBookmarked: this.props.isBookmarked };
+                this.handleClick = this.handleClick.bind(this);
+            }
+
+            handleClick() {
+                this.setState(prev => ({ isBookmarked: !prev.isBookmarked }));
+            }
+
+            render() {
+                const { name, description, display } = this.props;
+                const { isBookmarked } = this.state;
+                const className = display
+                    ? `box ${isBookmarked ? 'yellow' : ''}`
+                    : 'nodisplay';
+
+                return (
+                    <div className={className}>
+                        <h1>{name}</h1>
+                        <p>{description}</p>
+                        <button onClick={this.handleClick}>
+                            {isBookmarked ? 'Remove bookmark' : 'Set bookmark'}
+                        </button>
+                    </div>
+                );
+            }
+        }
+
+        class ProductList extends React.Component {
+            render() {
+                const { products, searchText } = this.props;
+                const txt = searchText.toLowerCase();
+
+                const listItems = products.map((p, index) => {
+                    const n = p.name.toLowerCase();
+                    const d = p.description.toLowerCase();
+                    const show = !txt || n.includes(txt) || d.includes(txt);
+
+                    return (
+                        <Product
+                            key={index}
+                            name={p.name}
+                            description={p.description}
+                            isBookmarked={p.isBookmarked}
+                            display={show}
+                        />
+                    );
+                });
+
+                return <div>{listItems}</div>;
+            }
+        }
+
+        class SearchBar extends React.Component {
+            constructor(props) {
+                super(props);
+                this.handleChange = this.handleChange.bind(this);
+            }
+
+            handleChange(e) {
+                this.props.onSearch(e.target.value);
+            }
+
+            render() {
+                return (
+                    <input
+                        type="text"
+                        placeholder="Input text to search"
+                        onChange={this.handleChange}
+                    />
+                );
+            }
+        }
+
+        class SearchableProductList extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { searchText: '' };
+                this.doSearch = this.doSearch.bind(this);
+            }
+
+            doSearch(txt) {
+                this.setState({ searchText: txt });
+            }
+
+            render() {
+                return (
+                    <div>
+                        <SearchBar onSearch={this.doSearch} />
+                        <ProductList
+                            products={this.props.products}
+                            searchText={this.state.searchText}
+                        />
+                    </div>
+                );
+            }
+        }
+
+        const products = [
+            { name: "Dell Laptops", description: "Laptops from Dell", isBookmarked: false },
+            { name: "Dell PCs", description: "PCs from Dell", isBookmarked: true },
+            { name: "HP Laptops", description: "Laptops from HP", isBookmarked: false }
+        ];
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <div className="container">
+                <SearchableProductList products={products} />
+            </div>
+        );
+    </script>
+
+</body>
+
+</html>
