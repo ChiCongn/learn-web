@@ -13,16 +13,45 @@ function Home() {
 }
 
 function Dashboard() {
-    const dispatch = useDispatch(); // React hook của Redux
+    const [message, setMessage] = useState('');
     const navigate = useNavigate(); // React Router hook
+    console.log('Welcome to Dashboard');
+
+    useEffect(() => {
+        const fetchDashboard = async () => {
+            const token = localStorage.getItem('tokenReactHookDemo');
+            if (!token) return navigate('/login');
+
+            try {
+                const res = await fetch('http://localhost:8000/api/auth/dashboard', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    setMessage(data.message);
+                } else {
+                    localStorage.removeItem('tokenReactHookDemo'); // error token → logout
+                    navigate('/login');
+                }
+            } catch (err) {
+                console.error(err);
+                navigate('/login');
+            }
+        };
+
+        fetchDashboard();
+    }, [navigate]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('tokenReactHookDemo');
+        navigate('/login');
+    };
+
     return (
         <div className="p-8 text-center">
             <h1 className="text-2xl">Xin chào, bạn đã đăng nhập!</h1>
             <button
-                onClick={() => {
-                    dispatch(logout()); // Dispatch action redux
-                    navigate('/login');
-                }}
+                onClick={handleLogout}
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
             >
                 Đăng xuất
@@ -34,18 +63,37 @@ function Dashboard() {
 function LoginForm() {
     const [email, setEmail] = useState(''); // (1) react hook useState
     const [password, setPassword] = useState('');
+    const [msg, setMsg] = useState('');
     const dispatch = useDispatch(); // (2) React hook của Redux
     const navigate = useNavigate(); // (3) React Router hook
     const user = useSelector((state) => state.auth.user); // (4) react hook userSelector  
 
     useEffect(() => {   // (5) React hook useEffect
-        if (user) navigate('/dashboard');
-    }, [user, navigate]);
+        if (localStorage.getItem('tokenReactHookDemo')) {
+            navigate('/dashboard');
+        }
+    }, [navigate]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email === 'admin' && password === '123') {
-            dispatch(login({ email })); // Dispatch action redux
+        try {
+            const res = await fetch('http://localhost:8000/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                console.log('Đăng nhập thành công');
+                localStorage.setItem('tokenReactHookDemo', data.token);
+                navigate('/dashboard');
+            } else {
+                console.log(data.message);
+                setMsg(data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            setMsg('Lỗi kết nối server');
         }
     };
 
@@ -82,6 +130,12 @@ function LoginForm() {
                                 required
                             />
                         </div>
+
+                        {msg && (
+                            <div className="text-center text-sm font-medium p-3 rounded-lg bg-red-50 text-red-700 border border-red-200">
+                                {msg}
+                            </div>
+                        )}
 
                         <button
                             type="submit"
